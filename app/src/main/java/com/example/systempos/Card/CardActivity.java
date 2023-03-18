@@ -1,11 +1,15 @@
 package com.example.systempos.Card;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,12 +18,15 @@ import androidx.room.Room;
 
 import com.example.systempos.Customer.CustomerData;
 import com.example.systempos.Customer.View_Customer;
+import com.example.systempos.Invoice.Invoiceitems;
 import com.example.systempos.Payment.PaymentData;
 import com.example.systempos.Payment.Show_PaymentActivity;
+import com.example.systempos.Product.ProductData;
 import com.example.systempos.R;
 import com.example.systempos.dao.UserDAO;
 import com.example.systempos.database.UserDatabase;
 import com.example.systempos.databinding.ActivityCardBinding;
+import com.example.systempos.model.CatogoryData;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -30,15 +37,19 @@ public class CardActivity extends AppCompatActivity {
     UserDatabase userDatabase;
     UserDAO userDAO;
 
+    List<ProductData> productData;
+
     List<CustomerData> customerDataList;
     List<PaymentData> paymentDataList;
     RecyclerView recyclerView;
 
-    TextView txSubtotal, txtotalAmount, txSubtotal_real;
-    EditText discount_p, discount_D;
-    double discount;
-    double discount_Bydollar;
+    TextView txSubtotal, txtotalAmount, txSubtotal_real,txDiscount_R,txDiscount_D,txCardTax;
 
+    EditText discount_p;
+    double discount;
+
+
+    Dialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +58,61 @@ public class CardActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
 
+
+
         recyclerView = findViewById(R.id.recycler_CardList);
         txSubtotal = findViewById(R.id.SubTotal);
-        txtotalAmount = findViewById(R.id.totalAmount);
+
         discount_p = findViewById(R.id.Discount_p);
-        discount_D = findViewById(R.id.Discount_D);
+
         txSubtotal_real = findViewById(R.id.Subtotal_Real);
 
+        txDiscount_D = findViewById(R.id.Card_Discount_D);
+        txDiscount_R = findViewById(R.id.Card_Discount_R);
+        txCardTax = findViewById(R.id.card_tax_D);
+
+
+
+
+        //dialog to print
+
+        dialog = new Dialog(CardActivity.this);
+        dialog.setContentView(R.layout.costom_dialog_save);
+        dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.back_ground_dialog_save));
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.setCancelable(false);
+
+
+        Button btncash  = dialog.findViewById(R.id.btncash);
+        Button btncancel = dialog.findViewById(R.id.btncancel);
+
+
+        TextView dialog_real = dialog.findViewById(R.id.dialog_Subtotal_Real);
+        TextView dialog_dollar = dialog.findViewById(R.id.dialog_Subtotal_Dollar);
+
+        btncancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(CardActivity.this, "Cancel", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+
+
+        btncash.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               Intent intent = new Intent(CardActivity.this,Invoiceitems.class);
+               startActivity(intent);
+
+
+            }
+        });
+
+
+
+
+        //
 
         userDatabase = Room.databaseBuilder(getApplicationContext(), UserDatabase.class, "bluedb")
                 .fallbackToDestructiveMigration()
@@ -62,8 +121,10 @@ public class CardActivity extends AppCompatActivity {
         userDAO = userDatabase.userDAO();
 
 
+        List<ProductData> productData1 = userDAO.getAllProduct();
+
         List<CardData> cardData = userDAO.getAllCard();
-        Card_Adapter cardAdapter = new Card_Adapter(cardData, getApplicationContext(), txSubtotal, txtotalAmount, txSubtotal_real, discount_p);
+        Card_Adapter cardAdapter = new Card_Adapter(cardData,productData1,getApplicationContext(), txSubtotal, txtotalAmount, txSubtotal_real,txCardTax, discount_p);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(cardAdapter);
 
@@ -99,19 +160,8 @@ public class CardActivity extends AppCompatActivity {
             }
         });
 
-        // binding.SubTotal.setText();
 
-//        binding.btnConfirm.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                sum = 0;
-//                for (int i = 0; i<cardData.size(); i++){
-//                    sum+= (cardData.get(i).getPro_cardQty() * cardData.get(i).getPro_cardQty());
-//                }
-//
-//
-//            }
-//        });
+
 
         binding.btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,47 +169,65 @@ public class CardActivity extends AppCompatActivity {
                 double sum = 0.0;
                 int i;
                 for (i = 0; i < cardData.size(); i++) {
+
                     sum = (sum + (cardData.get(i).getPro_cardPrice() * cardData.get(i).getPro_cardQty()));
                 }
-                discount = 0;
 
+                discount = 0;
                 if (discount_p.getText().toString().isEmpty()) {
-                    txSubtotal.setText("$" + numberFormat(String.valueOf(sum)));
+                    txDiscount_D.setText("$" + numberFormat(String.valueOf(sum)));
+
                 } else {
                     discount = Double.parseDouble(discount_p.getText().toString());
                     double discount_price = discount / 100;
                     double discountTotal = sum - (sum * discount_price);
 
-                    txSubtotal.setText("$" + numberFormat(String.valueOf(discountTotal)));
-                    txSubtotal_real.setText("R" + numberFormat(String.valueOf(discountTotal * 4100)));
+                    txDiscount_D.setText("$" + numberFormat(String.valueOf(discountTotal)));
+                    txDiscount_R.setText("R" + numberFormat(String.valueOf(discountTotal * 4100)));
+
+                    dialog_real.setText("R" + numberFormat(String.valueOf(discountTotal)));
+                    dialog_dollar.setText("R" + numberFormat(String.valueOf(discountTotal * 4100)));
+
+
 
                 }
-
-//                discount_Bydollar = 0;
-//                if(discount_D.getText().toString().isEmpty()){
-//                    txSubtotal.setText("$" + numberFormat(String.valueOf(sum)));
-//                }else {
-//                    discount_Bydollar = Double.parseDouble(discount_D.getText().toString());
-//                    double discount_dollar = sum - discount_Bydollar;
-//                    txSubtotal.setText("$" + numberFormat(String.valueOf(discount_dollar)));
-//
-//                }
-
+                dialog.show();
             }
+
         });
 
+//        int i,k;
+//        double sum = 0.0;
+//        double sumTax = 0.0;
+//        for (i = 0; i < cardData.size(); i++) {
+//            sum = (sum + (cardData.get(i).getPro_cardPrice() * cardData.get(i).getPro_cardQty()));
+//            sumTax = (sumTax + (productData1.get(i).getProtax()));
+//        }
 
-        int i;
-        double sum = 0.0;
-        for (i = 0; i < cardData.size(); i++) {
-            sum = (sum + (cardData.get(i).getPro_cardPrice() * cardData.get(i).getPro_cardQty()));
-        }
+//
+//        txSubtotal.setText("$" + numberFormat(String.valueOf(sum)));
+//        txSubtotal_real.setText("R" + numberFormat(String.valueOf(sum * 4100)));
+//
+//        txCardTax.setText("$" + numberFormat(String.valueOf(sumTax)));
+//
+//        txDiscount_D.setText("$" + numberFormat(String.valueOf(sum)));
+//        txDiscount_R.setText("R" + numberFormat(String.valueOf(sum * 4100)));
+//
+//        dialog_real.setText("R" + numberFormat(String.valueOf(sum)));
+//        dialog_dollar.setText("R" + numberFormat(String.valueOf(sum * 4100)));
 
-        txSubtotal.setText("$" + numberFormat(String.valueOf(sum)));
-        txSubtotal_real.setText("R" + numberFormat(String.valueOf(sum * 4100)));
-        txtotalAmount.setText("$" + numberFormat(String.valueOf(sum)));
+
 
     }
+
+//    public  void CheckQty(){
+//       List<ProductData> productData1;
+//
+//        double sub;
+//        for(int i = 0; i< productData.size(); i++){
+//            sub  = productData.get(i).getPro_cardQty() - productData.get(i).getProqty();
+//        }
+//    }
 
 
     public static String numberFormat(String number) {

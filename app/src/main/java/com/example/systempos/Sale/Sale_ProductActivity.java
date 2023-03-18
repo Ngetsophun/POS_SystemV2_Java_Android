@@ -3,6 +3,7 @@ package com.example.systempos.Sale;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -12,8 +13,10 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -24,12 +27,16 @@ import com.bumptech.glide.Glide;
 
 import com.example.systempos.Card.CardActivity;
 import com.example.systempos.Card.CardData;
+import com.example.systempos.Catogory.View_Catogoey;
+import com.example.systempos.Product.AdapterProduct;
 import com.example.systempos.Product.ProductData;
 import com.example.systempos.R;
 import com.example.systempos.dao.UserDAO;
 import com.example.systempos.database.UserDatabase;
 import com.example.systempos.databinding.ActivitySaleProductBinding;
+import com.example.systempos.model.CatogoryData;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,16 +48,27 @@ public class Sale_ProductActivity extends AppCompatActivity {
     UserDAO userDAO;
     RecyclerView recyclerView;
     BottomSheetDialog sheetDialog;
+    List<CardData> cardDataList;
+
+    List<CatogoryData> catogoryDataList;
+    String CatogoryName;
+    CatogoryData catogoryData;
+    ProductData productData;
+    AdapterProductToSale adapterProductToSale;
+    AdapterProduct adapterProduct;
 
 
-
+//    @Override
+//    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+//        catogoryData = new CatogoryData(this).get(CatogoryData.class);
+//        super.onCreate(savedInstanceState, persistentState);
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivitySaleProductBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
 
 
 
@@ -65,6 +83,11 @@ public class Sale_ProductActivity extends AppCompatActivity {
         List<ProductData> productData = userDAO.getAllProduct();
         AdapterProductToSale adapterProductToSale = new AdapterProductToSale(productData,getApplicationContext());
 
+        List<CatogoryData> catogoryData1 = userDAO.getAllCato();
+
+
+
+
 
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this,2,GridLayoutManager.VERTICAL,false);
@@ -72,16 +95,10 @@ public class Sale_ProductActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapterProductToSale);
 
         getIntenData();
+//        OnTabLayout();
 
 
-        binding.saleTocard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Sale_ProductActivity.this, CardActivity.class);
-                startActivity(intent);
 
-            }
-        });
         binding.imgSearchList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -121,11 +138,50 @@ public class Sale_ProductActivity extends AppCompatActivity {
             }
         });
 
+    }
+    /*
+
+    //tab layout
+    private void OnTabLayout(){
+        binding.tabLayoutOnSale.addTab(binding.tabLayoutOnSale.newTab().setText("All"));
+        if(catogoryDataList.size() !=0){
+            for(CatogoryData catogoryData1 : catogoryDataList){
+                CatogoryName = catogoryData1.getCatoname();
+                binding.tabLayoutOnSale.addTab(binding.tabLayoutOnSale.newTab().setText(CatogoryName));
+            }
+        }
 
 
 
+
+        binding.tabLayoutOnSale.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if(tab.getText()!="All"){
+                    adapterProductToSale.getFilter().filter(tab.getText());
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+    }
+//    public String filterCatogoryName(){
+//        String txt =
+//    }
+
+    private void GetCategory(){
 
     }
+    */
+
     private void getIntenData(){
         if(getIntent().hasExtra("product")){
 
@@ -195,9 +251,10 @@ public class Sale_ProductActivity extends AppCompatActivity {
 //                    if(cardData.getPro_cardNameKH().isEmpty() || cardData.getPro_cardNameEng(){
 //                        Toast.makeText(context, "Sale Already", Toast.LENGTH_SHORT).show();
 //
-//                    }else {
+//                    }else{
 //
 //                        Toast.makeText(context, "Buy 1", Toast.LENGTH_SHORT).show();
+
 //                    }
 
 //

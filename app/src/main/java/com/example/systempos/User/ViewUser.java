@@ -1,14 +1,18 @@
 package com.example.systempos.User;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,14 +23,18 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 
 import com.example.systempos.CurrentDateHelper;
 import com.example.systempos.R;
+import com.example.systempos.ViewModel.UserViewModel;
 import com.example.systempos.dao.UserDAO;
 import com.example.systempos.database.UserDatabase;
 import com.example.systempos.databinding.ActivityViewUserBinding;
@@ -43,6 +51,7 @@ public class ViewUser extends AppCompatActivity {
     ActivityViewUserBinding binding;
     UserDAO userDAO;
     UserDatabase userDatabase;
+    UserData userData;
     RecyclerView recyclerView;
     String date = "";
 
@@ -52,8 +61,14 @@ public class ViewUser extends AppCompatActivity {
     Boolean Allow = false;
     Boolean Views = false;
 
-
     File file;
+
+    Dialog dialog;
+
+    AdapterUser adapterUser;
+    UserViewModel userViewModel;
+
+    EditText username;
 
 
 
@@ -64,19 +79,22 @@ public class ViewUser extends AppCompatActivity {
         binding = ActivityViewUserBinding.inflate(getLayoutInflater());
             setContentView(binding.getRoot());
 
-        recyclerView =findViewById(R.id.showUser);
+            userData = new UserData();
 
-            userDatabase = Room.databaseBuilder(getApplicationContext(),UserDatabase.class,"bluedb")
-                    .allowMainThreadQueries()
-                    .fallbackToDestructiveMigration()
-                    .build();
 
-            userDAO = userDatabase.userDAO();
-        List<UserData> userData = userDAO.getAllUser();
-        AdapterUser adapter = new AdapterUser(userData,getApplicationContext());
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
+        //live data
+        userViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(UserViewModel.class);
+      userViewModel.getAllUserLiveData().observe(ViewUser.this, new Observer<List<UserData>>() {
+          @Override
+          public void onChanged(List<UserData> userData) {
+              if(userData != null){
+                  adapterUser = new AdapterUser(userData,getBaseContext());
+                  adapterUser.setUser(userData);
+                  binding.showUser.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                  binding.showUser.setAdapter(adapterUser);
+              }
+          }
+      });
 
 
         binding.addUserAdmin.setOnClickListener(new View.OnClickListener() {
@@ -131,8 +149,6 @@ public class ViewUser extends AppCompatActivity {
             }
         });
 
-
-
         binding.btnfloatuser.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -161,7 +177,7 @@ public class ViewUser extends AppCompatActivity {
                     public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
 
                         month = month+1;
-                        String date = day+"/"+month+"/"+year;
+                        String date = dayOfMonth+"/"+month+"/"+year;
                         binding.addUserDob.setText(date);
 
                     }
@@ -176,16 +192,10 @@ public class ViewUser extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Date date = Calendar.getInstance().getTime();
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
-                String date_save = simpleDateFormat.format(date);
-                
                 String name = binding.addUsername.getText().toString().trim();
                 String pass = binding.addUserPassword.getText().toString().trim();
                 String address = binding.addUserAddress.getText().toString();
                 String dob = binding.addUserDob.getText().toString().trim();
-
-
 
                 String role = "";
                 if(binding.addUserAdmin.isChecked()){
@@ -207,28 +217,66 @@ public class ViewUser extends AppCompatActivity {
                     gender  = "Female";
                 }
 
-                
+
                 String permission = "";
                 if(binding.addCheckView.isChecked()){
                     permission = "View";
-                    
+
+                }
+
+
+
+                if(TextUtils.isEmpty(name) ||(TextUtils.isEmpty(pass))|| (TextUtils.isEmpty(address))||(TextUtils.isEmpty(dob)))   {
+                    binding.addUsername.setError("Requird");
+                    binding.addUserPassword.setError("Requird");
+                    binding.addUserAddress.setError("Requird");
+                    binding.addUserDob.setError("Requird");
+                }
+                else if(TextUtils.isEmpty(name)){
+                    binding.addUsername.setError("Requird");
+
+                }else if(TextUtils.isEmpty(pass)){
+                    binding.addUserPassword.setError("Requird");
+
+                }else if(TextUtils.isEmpty(address)){
+                    binding.addUserAddress.setError("Requird");
+
+                }else if(TextUtils.isEmpty(dob)){
+                    binding.addUserDob.setError("Requird");
+
+                }else if(TextUtils.isEmpty(file.getPath())) {
+                    Toast.makeText(ViewUser.this, "Choose Image", Toast.LENGTH_SHORT).show();
+                } else{
+                    userData.setName(name);
+                    userData.setPassword(pass);
+                    userData.setGender(gender);
+                    userData.setAddress(address);
+                    userData.setRole(role);
+                    userData.setDob(dob);
+                    userData.setPermission(permission);
+                    userData.setImage(file.getPath());
+                    userData.setDate(CurrentDateHelper.getCurrentDate());
+
+                    userViewModel.InsertUser(userData);
+
+
+                    Toast.makeText(ViewUser.this, "Save Success", Toast.LENGTH_SHORT).show();
+                    BuildDialogsaveSuccess();
+
+
+
+                    binding.addUsername.setText("");
+                    binding.addUserPassword.setText("");
+                    binding.addUserAddress.setText("");
+                    binding.addUserDob.setText("");
+                    dialog.show();
                 }
 
 
 
 
-
-                userDatabase.userDAO().InsertUser(new UserData(name,pass,gender,address,role,dob,permission,file.getPath(),date_save));
-                userDAO = userDatabase.userDAO();
-
-                Toast.makeText(ViewUser.this, "Save Success", Toast.LENGTH_SHORT).show();
-
-                binding.addUsername.setText("");
-                binding.addUserPassword.setText("");
-                binding.addUserAddress.setText("");
-                binding.addUserDob.setText("");
-
             }
+
         });
 
         binding.chooseimgAddUser.setOnClickListener(new View.OnClickListener() {
@@ -239,8 +287,36 @@ public class ViewUser extends AppCompatActivity {
         });
 
 
+
+
     }
 
+
+
+    //add animation
+    private void BuildDialogsaveSuccess(){
+        dialog  = new Dialog(ViewUser.this);
+        dialog.setContentView(R.layout.custom_savedialog_success);
+        dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.back_ground_dialog_save));
+//        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.setCancelable(false);
+        Button dialog_save = dialog.findViewById(R.id.btnDialog_user_ok);
+
+        dialog_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+
+
+
+    }
+
+    //--------
+
+    //choose Image
     private  void ChooseImageAdd(){
         launcher.launch(
                 ImagePicker.Companion.with(this)
@@ -281,6 +357,8 @@ public class ViewUser extends AppCompatActivity {
             this.context = context;
         }
 
+
+
         @NonNull
         @Override
         public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -297,6 +375,8 @@ public class ViewUser extends AppCompatActivity {
             holder.role.setText(String.valueOf(userData.get(position).getRole()));
             holder.address.setText(String.valueOf(userData.get(position).getAddress()));
             holder.date.setText(CurrentDateHelper.getCurrentDate());
+
+
 
 
 
@@ -336,6 +416,11 @@ public class ViewUser extends AppCompatActivity {
         @Override
         public int getItemCount() {
             return userData.size();
+        }
+
+        public void setUser(List<UserData> userDatas){
+            userData = userDatas;
+            notifyDataSetChanged();
         }
 
         public class MyViewHolder extends RecyclerView.ViewHolder{

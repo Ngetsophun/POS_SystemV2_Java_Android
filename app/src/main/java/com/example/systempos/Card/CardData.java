@@ -20,17 +20,19 @@ public class CardData implements Serializable {
     @ColumnInfo
     double Pro_cardPrice;
 
+    double Pro_cardTax;
     String Pro_cardimg;
 
     public CardData() {
     }
 
-    public CardData(int cardid, String pro_cardNameEng, String pro_cardNameKH, int pro_cardQty, double pro_cardPrice, String pro_cardimg) {
+    public CardData(int cardid, String pro_cardNameEng, String pro_cardNameKH, int pro_cardQty, double pro_cardPrice, double pro_cardTax, String pro_cardimg) {
         Cardid = cardid;
         this.pro_cardNameEng = pro_cardNameEng;
         Pro_cardNameKH = pro_cardNameKH;
         Pro_cardQty = pro_cardQty;
         Pro_cardPrice = pro_cardPrice;
+        Pro_cardTax = pro_cardTax;
         Pro_cardimg = pro_cardimg;
     }
 
@@ -72,6 +74,14 @@ public class CardData implements Serializable {
 
     public void setPro_cardPrice(double pro_cardPrice) {
         Pro_cardPrice = pro_cardPrice;
+    }
+
+    public double getPro_cardTax() {
+        return Pro_cardTax;
+    }
+
+    public void setPro_cardTax(double pro_cardTax) {
+        Pro_cardTax = pro_cardTax;
     }
 
     public String getPro_cardimg() {

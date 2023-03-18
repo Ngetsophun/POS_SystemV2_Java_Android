@@ -14,7 +14,7 @@
     <LinearLayout
         android:id="@+id/Show_Custom_Activity"
         android:layout_width="match_parent"
-
+        android:visibility="gone"
         android:layout_height="match_parent"
         android:orientation="vertical">
         <LinearLayout
@@ -70,7 +70,7 @@
     <!--    Add Customer-->
     <LinearLayout
 
-        android:visibility="gone"
+
         android:id="@+id/Add_Custom_Activity"
         android:layout_width="match_parent"
         android:orientation="vertical"
@@ -104,10 +104,9 @@
             android:layout_height="match_parent">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="530dp"
+                android:layout_height="match_parent"
                 android:layout_margin="10dp"
-                android:background="@drawable/background_page"
-                android:elevation="8dp"
+
                 android:orientation="vertical">
 
                 <TextView
@@ -131,12 +130,17 @@
                 </LinearLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_marginRight="20dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginLeft="20dp"
                     android:layout_height="wrap_content"
+
+
+                    app:endIconMode="clear_text"
+
+                    app:endIconContentDescription="koko"
                     android:hint="Name">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -148,7 +152,7 @@
 
 
                 <com.google.android.material.textfield.TextInputLayout
-
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_marginRight="20dp"
                     android:layout_marginLeft="20dp"
@@ -200,7 +204,7 @@
                 </LinearLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_marginRight="20dp"
                     android:layout_marginLeft="20dp"
@@ -215,7 +219,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_marginRight="20dp"
                     android:layout_marginLeft="20dp"
@@ -230,7 +234,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_marginRight="20dp"
                     android:layout_marginLeft="20dp"
@@ -264,8 +268,10 @@
                         android:backgroundTint="@color/blue"
                         android:text="Add Customer"
                         android:textColor="@color/white"
+
                         android:textSize="15dp"
                         android:textStyle="bold" />
+
                 </LinearLayout>
 
 

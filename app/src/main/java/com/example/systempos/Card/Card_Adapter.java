@@ -28,20 +28,23 @@ public class Card_Adapter extends RecyclerView.Adapter<Card_Adapter.MyViewHolder
     Context context;
 
     UserDAO userDAO;
-    UserDatabase userDatabase;
-    ProductData productData;
-    TextView subtotal, subtotal_real;
+
+    List<ProductData> productData;
+//     ProductData productData;
+
+    TextView subtotal, subtotal_real,txCardTax;
     TextView totalAmount;
 
     EditText discount_p;
-    EditText discount_doller;
 
 
-    public Card_Adapter(List<CardData> cardData, Context context, TextView subtotal, TextView totalAmount, TextView subtotal_real, EditText discount_p) {
+
+    public Card_Adapter(List<CardData> cardData,List<ProductData> productData,Context context, TextView subtotal, TextView totalAmount, TextView subtotal_real,TextView txCardTax, EditText discount_p) {
         this.cardData = cardData;
         this.context = context;
         this.productData = productData;
         this.subtotal = subtotal;
+        this.txCardTax = txCardTax;
         this.discount_p = discount_p;
         this.totalAmount = totalAmount;
         this.subtotal_real = subtotal_real;
@@ -101,6 +104,7 @@ public class Card_Adapter extends RecyclerView.Adapter<Card_Adapter.MyViewHolder
                 notifyDataSetChanged();
                 UpdatePrice();
 
+
             }
         });
 
@@ -137,15 +141,19 @@ public class Card_Adapter extends RecyclerView.Adapter<Card_Adapter.MyViewHolder
     public void UpdatePrice() {
         int i;
         double sum = 0.0;
+
         for (i = 0; i < cardData.size(); i++) {
             sum = (sum + (cardData.get(i).getPro_cardPrice() * cardData.get(i).getPro_cardQty()));
+
         }
         subtotal.setText("$" + numberFormat(String.valueOf(sum)));
-        totalAmount.setText("$" + numberFormat(String.valueOf(sum)));
         subtotal_real.setText("R" + numberFormat(String.valueOf(sum * 4100)));
 
 
+
+
     }
+
 
     public static String numberFormat(String number) {
         DecimalFormat decimalFormat = new DecimalFormat("###,###,#0.00");

@@ -14,7 +14,7 @@
         />
 
     <item
-        android:title="About Us"
+        android:title="About US"
         android:icon="@drawable/about"
         android:id="@+id/About_US"
         />

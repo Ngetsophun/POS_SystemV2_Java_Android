@@ -10,7 +10,7 @@
 <!--    show User-->
     <LinearLayout
         android:id="@+id/Show_User_Activity"
-
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:layout_height="wrap_content">
@@ -75,11 +75,11 @@
             android:layout_width="300dp"
             android:layout_height="55dp"
             android:layout_marginRight="20dp"
-            android:elevation="5dp"
+            android:elevation="10dp"
             android:backgroundTint="@color/blue"
             android:src="@drawable/add"
             android:id="@+id/btnfloatuser"
-            android:layout_gravity="end">
+            android:layout_gravity="end|bottom">
 
         </com.google.android.material.floatingactionbutton.FloatingActionButton>
     </LinearLayout>
@@ -88,12 +88,13 @@
 
     <ScrollView
         android:layout_width="match_parent"
+
         android:layout_height="match_parent">
         <LinearLayout
 
             android:id="@+id/Add_User_Activity"
             android:layout_width="match_parent"
-            android:visibility="gone"
+
             android:layout_height="match_parent"
             android:orientation="vertical">
 
@@ -121,9 +122,6 @@
 
             </LinearLayout>
 
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="50dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -131,10 +129,6 @@
                 android:layout_marginRight="5dp"
                 android:layout_height="match_parent"
                 android:gravity="bottom"
-
-
-                android:background="@drawable/background_page"
-                android:elevation="5dp"
                 android:orientation="vertical">
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -153,19 +147,24 @@
 
                     <ImageView
                         android:id="@+id/chooseimg_add_user"
-                        android:layout_width="80dp"
+                        android:layout_width="120dp"
+                       android:src="@drawable/add_image2"
                         android:layout_gravity="center"
-                        android:background="@drawable/ic_launcher_background"
-                        android:layout_height="70dp"/>
+                        android:layout_height="120dp"/>
                     <com.google.android.material.textfield.TextInputLayout
-
+                        android:layout_marginTop="20dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        app:endIconMode="clear_text"
+                        app:startIconDrawable="@drawable/person1"
+                        app:errorEnabled="true"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:hint="User Name">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:inputType="text"
                             android:id="@+id/add_username"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -174,7 +173,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:passwordToggleEnabled="true"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="5dp"
+
+
+                        app:startIconDrawable="@drawable/lock"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:hint="Password">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -208,7 +211,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="62dp"
-                                android:checked="true"
+                                android:checked="false"
                                 android:text="Male" />
 
                             <RadioButton
@@ -216,7 +219,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="50dp"
-
+                                android:checked="false"
                                 android:text="Female" />
                         </RadioGroup>
 
@@ -228,13 +231,18 @@
                     <com.google.android.material.textfield.TextInputLayout
 
                         android:layout_width="match_parent"
-
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_height="wrap_content"
+                        app:endIconMode="clear_text"
+                        app:errorEnabled="true"
+                        android:layout_marginTop="10dp"
+                        app:startIconDrawable="@drawable/add_location"
                         android:hint="Address">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:inputType="text"
                             android:id="@+id/add_userAddress"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -244,7 +252,8 @@
                     <com.google.android.material.textfield.TextInputLayout
 
                         android:layout_width="match_parent"
-                        android:layout_marginTop="10dp"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_marginTop="5dp"
                         android:layout_height="wrap_content"
                         android:hint="Date of Birth">
 
@@ -252,6 +261,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:drawableEnd="@drawable/img_date"
+                            android:inputType="datetime"
                             android:id="@+id/add_userDob"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -320,27 +330,26 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:gravity="end"
-                            android:layout_marginRight="10dp"
+
                             android:layout_height="match_parent">
 
                             <CheckBox
                                 android:id="@+id/add_check_Allow"
-                                android:layout_width="wrap_content"
+                                android:layout_width="80dp"
                                 android:layout_height="30dp"
                                 android:text="Allow" />
 
                             <CheckBox
                                 android:id="@+id/add_check_View"
-                                android:layout_width="wrap_content"
-
+                                android:layout_width="80dp"
                                 android:layout_height="30dp"
                                 android:text="View" />
 
                             <CheckBox
                                 android:id="@+id/add_check_sale"
-                                android:layout_width="wrap_content"
+                                android:layout_width="80dp"
                                 android:layout_height="30dp"
-                                android:layout_marginLeft="20dp"
+
                                 android:text="Sale" />
 
                         </LinearLayout>
@@ -351,18 +360,18 @@
 
                             <CheckBox
                                 android:id="@+id/add_check_Insert"
-                                android:layout_width="wrap_content"
+                                android:layout_width="80dp"
                                 android:layout_height="30dp"
                                 android:layout_marginLeft="10dp"
                                 android:text="Insert" />
                             <CheckBox
                                 android:id="@+id/add_check_Update"
-                                android:layout_width="wrap_content"
+                                android:layout_width="80dp"
                                 android:layout_height="30dp"
                                 android:text="Update" />
                             <CheckBox
                                 android:id="@+id/add_check_Delete"
-                                android:layout_width="wrap_content"
+                                android:layout_width="80dp"
                                 android:layout_height="30dp"
                                 android:text="Delete" />
 

@@ -1,5 +1,6 @@
 package com.example.systempos.Catogory;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,12 +19,16 @@ import androidx.room.Room;
 
 
 import com.example.systempos.R;
+import com.example.systempos.Sale.SaleData;
 import com.example.systempos.dao.UserDAO;
 import com.example.systempos.database.UserDatabase;
 import com.example.systempos.databinding.ActivityViewCatogoeyBinding;
 import com.example.systempos.model.CatogoryData;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.transform.sax.TemplatesHandler;
 
 public class View_Catogoey extends AppCompatActivity {
 
@@ -107,9 +112,11 @@ public class View_Catogoey extends AppCompatActivity {
     public class AdapterCatogory extends RecyclerView.Adapter<AdapterCatogory.MyviewHolder>{
 
         List<CatogoryData> catogoryData;
+        List<SaleData> saleDataList;
 
         public AdapterCatogory(List<CatogoryData> catogoryData) {
             this.catogoryData = catogoryData;
+            this.saleDataList = new ArrayList<>();
         }
 
         @NonNull

@@ -1,5 +1,6 @@
 package com.example.systempos.dao;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
@@ -48,7 +49,10 @@ public interface UserDAO {
 
 
   @Query("SELECT * FROM tbUser")
-   List<UserData> getAllUser();
+   List<UserData> getAllUserFuture();
+
+    @Query("SELECT * FROM tbUser")
+    LiveData<List<UserData>> getAllUserLiveData();
 
     @Query("SELECT * FROM product")
     List<ProductData> getAllProduct();
@@ -117,6 +121,8 @@ public interface UserDAO {
    @Query("DELETE FROM card WHERE Cardid =:CardID")
     void DeleteCardById(int CardID);
 
+    @Query("SELECT * from tbUser where name=:username AND password=:password")
+    List<UserData> loginAccount(String username , String password);
 
 
 

@@ -6,10 +6,11 @@
     tools:context=".Drawer.About_US_Fragment">
 
     <TextView
+
+        android:id="@+id/About_US"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:textSize="30dp"
         android:text="About US"
-        />
+        android:textSize="30dp" />
 </FrameLayout>

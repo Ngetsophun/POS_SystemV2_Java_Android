@@ -1,11 +1,16 @@
 package com.example.systempos;
 
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -20,9 +25,12 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.systempos.Drawer.About_US_Fragment;
 import com.example.systempos.Drawer.LanguageFragment;
 import com.example.systempos.Drawer.SettingFragment;
+import com.example.systempos.LoginForm.LoginActivity;
 import com.example.systempos.Payment.Show_PaymentActivity;
+import com.example.systempos.User.ViewUser;
 import com.example.systempos.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationView;
 
@@ -41,19 +49,51 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     AlertDialog.Builder builder;
     CardView cardView;
 
-    ActivityMainBinding binding;
+
+
+
+    TextView username;
+
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+
+
+    public static final String SHARE_NAME = "isLogin";
+    public static final String KEY_USERNAME = "username";
+    public static final String KEY_USERPOSITION = "userposition";
+    public static final String KEY_USERPROFILE = "profile";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         frameLayout= findViewById(R.id.fragmMenu);
+
+
+
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmMenu,new MenuFragment()).commit();
 
-        //login
 
-        //======================apbar
+//        login share preferences
+        sharedPreferences = this.getSharedPreferences(SHARE_NAME,MODE_PRIVATE);
+        editor = sharedPreferences.edit();
 
+        if (sharedPreferences.getString(SHARE_NAME,"false").equals("fale")){
+            editor.putString(SHARE_NAME,"yes");
+
+
+            editor.commit();
+            openLogin();
+        }
+
+
+
+
+
+
+
+        //======================app_bar
         drawerLayout = findViewById(R.id.drawer);
         navigationView = findViewById(R.id.navigation);
         toolbar = findViewById(R.id.toolbar);
@@ -67,13 +107,59 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView.setNavigationItemSelectedListener(this);
 
+
+
+
+
+        //Intent image to activity user
+        ImageView img_headerUsername =  navigationView.getHeaderView(0).findViewById(R.id.img_hearder_drawer);
+        img_headerUsername.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MainActivity.this,ViewUser.class);
+                startActivity(i);
+                Toast.makeText(MainActivity.this, "Add new user", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
+
+
     }
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+        } //else {
+//            AlertDialog.Builder adb = new AlertDialog.Builder(this);
+//            adb.setTitle("Confire Exit?");
+//            adb.setMessage("Are you sure you want to Exit?");
+//            adb.setCancelable(false);
+//            adb.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialogInterface, int i) {
+//                    finish();
+//                }
+//            });
+//            adb.setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                }
+//            });
+//
+//            AlertDialog alertDialog = adb.create();
+//            alertDialog.show();
+
+//
+//            super.onBackPressed();
+       // }
+    }
+
+
+    public void openLogin(){
+        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        finish();
     }
 
     @Override
@@ -85,8 +171,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.setting:
                 replaceFramgement(new SettingFragment());break;
             case R.id.About_US:
-                replaceFramgement(new LanguageFragment());break;
+                replaceFramgement(new About_US_Fragment());break;
             case R.id.Logout:
+
                 findViewById(R.id.Logout).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -98,6 +185,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 finish();
+                                editor.putString(SHARE_NAME,"false");
+                                editor.commit();
+                                openLogin();
                             }
                         });
                         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -109,6 +199,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         builder.create().show();
                     }
                 });
+                break;
             case R.id.languages:
                 replaceFramgement(new LanguageFragment());break;
             case R.id.dashboard:
@@ -116,6 +207,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.Payment:
                 Intent intent = new Intent(MainActivity.this, Show_PaymentActivity.class);
                 startActivity(intent);
+
 
         }
         return true;

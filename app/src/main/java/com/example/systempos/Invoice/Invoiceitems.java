@@ -5,13 +5,18 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.systempos.R;
+import com.example.systempos.databinding.ActivityInvoiceitemsBinding;
 
 public class Invoiceitems extends AppCompatActivity {
+
+    ActivityInvoiceitemsBinding binding;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_invoiceitems);
+        binding  = ActivityInvoiceitemsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
     }
 }
